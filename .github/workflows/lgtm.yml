@@ -1,0 +1,56 @@
+name: LGTM
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+jobs:
+  test_api:
+    name: API Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+          cache: 'npm'
+          cache-dependency-path: packages/api/package-lock.json
+      - run: npm ci --silent --no-audit --no-fund
+        working-directory: ./packages/api
+      - run: npm run lint
+        working-directory: ./packages/api
+      - run: npm run typecheck
+        working-directory: ./packages/api
+      - run: npm run test
+        working-directory: ./packages/api
+  test_ui:
+    name: UI Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+          cache: 'npm'
+          cache-dependency-path: packages/ui/package-lock.json
+      - run: npm ci --silent --no-audit --no-fund
+        working-directory: ./packages/ui
+      - run: npm run lint
+        working-directory: ./packages/ui
+      - run: npm run typecheck
+        working-directory: ./packages/ui
+      - run: npm run test
+        working-directory: ./packages/ui
+  commit:
+    name: Conventional Commit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: wagoid/commitlint-github-action@v4

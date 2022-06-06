@@ -1,0 +1,43 @@
+version: "2"
+
+services:
+  mpd:
+    restart: on-failure
+    user: mpd
+    cap_add:
+      - SYS_NICE
+    build:
+      context: packages/mpd
+    ports:
+      - 8000:8000
+    volumes:
+      - ./data/mpd/config:/root/.config
+      - ./data/mpd/music:/var/lib/mpd/music
+      - ./data/mpd/playlists:/var/lib/mpd/playlists
+  ui:
+    restart: on-failure
+    user: node
+    build:
+      context: packages/ui
+    image: node:16-alpine
+    command: ./entrypoint.sh
+  api:
+    restart: on-failure
+    user: node
+    build:
+      context: packages/api
+    command: ./entrypoint.sh
+    volumes:
+      - ./data/api/cache:/usr/src/api/cache
+    depends_on:
+      - mpd
+  nginx:
+    restart: on-failure
+    image: nginx:alpine
+    build:
+      context: packages/nginx
+    ports:
+      - 80:80
+    depends_on:
+      - ui
+      - api
