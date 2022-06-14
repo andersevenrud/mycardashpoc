@@ -19,13 +19,13 @@ export const ConnectionContext = createContext<{
  * Handles WebSocket connections.
  */
 export function ConnectionProvider({
-  connection,
+  configuration,
   children,
-}: PropsWithChildren<{ connection: ConnectionConfiguration }>) {
+}: PropsWithChildren<{ configuration: ConnectionConfiguration }>) {
   const [connected, setConnected] = useState(false)
 
   useEffect(() => {
-    const ws = new ReconnectingWebSocket(connection.uri)
+    const ws = new ReconnectingWebSocket(configuration.uri)
 
     const onConnected = () => setConnected(true)
 

@@ -24,7 +24,7 @@ export function Providers({
 }>) {
   return (
     <BrowserRouter>
-      <ConnectionProvider connection={configuration.connection}>
+      <ConnectionProvider configuration={configuration.connection}>
         <ToastProvider configuration={configuration.toaster}>
           <ModuleProvider configuration={configuration.modules}>
             {children}
