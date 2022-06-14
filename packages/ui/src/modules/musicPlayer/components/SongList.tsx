@@ -1,8 +1,9 @@
 import React, { useEffect, useRef } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlay } from '@fortawesome/free-solid-svg-icons'
-import { classNames, secondsToTime } from '~/utils'
+import { classNames } from '~/utils'
 import AlbumArt from './AlbumArt'
+import TimeStamp from '~/components/TimeStamp'
 import type { Song } from '~/services/mpd'
 
 export default function SongList({
@@ -54,7 +55,7 @@ export default function SongList({
               </div>
             </div>
             <div className="flex items-center justify-center">
-              <span>{secondsToTime(track.duration)}</span>
+              <TimeStamp value={track.duration} />
             </div>
           </div>
         </div>

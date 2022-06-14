@@ -13,9 +13,10 @@ import {
 import { MusicPlayerActionTypes } from './types'
 import { useModuleProviderState, useModuleProvider } from '~/providers/modules'
 import { useToasterErrorHandler } from '~/providers/toaster'
-import { classNames, spanToIntervals } from '~/utils'
+import { classNames } from '~/utils'
 import api from '~/services/mpd'
 import Module from '~/components/Module'
+import TimeInterval from '~/components/TimeInterval'
 import ControlButton from './components/ControlButton'
 import ControlSlider from './components/ControlSlider'
 import SearchInput from './components/SearchInput'
@@ -215,7 +216,7 @@ function MusicPlayerControls() {
         />
 
         <h3 className="space-x-1 text-center text-sm">
-          <time>{spanToIntervals(elapsed, duration)}</time>
+          <TimeInterval elapsed={elapsed} duration={duration} />
         </h3>
       </div>
 
