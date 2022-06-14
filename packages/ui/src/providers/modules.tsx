@@ -8,7 +8,7 @@ import React, {
 } from 'react'
 import { differenceWith, isEqual, fromPairs, toPairs } from 'lodash-es'
 import { useLocation } from 'react-router-dom'
-import { ee } from './events'
+import { ee } from '~/providers/events'
 import dashboard from '~/modules/dashboard'
 import diagnostics from '~/modules/diagnostics'
 import musicPlayer from '~/modules/musicPlayer'

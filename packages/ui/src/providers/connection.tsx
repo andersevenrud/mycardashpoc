@@ -1,6 +1,6 @@
 import ReconnectingWebSocket from 'reconnecting-websocket'
 import React, { createContext, useContext, useState, useEffect } from 'react'
-import { ee } from './events'
+import { ee } from '~/providers/events'
 import type { PropsWithChildren } from 'react'
 import type { WebsocketMessage } from '~/types'
 import type { ConnectionConfiguration } from '~/config'
