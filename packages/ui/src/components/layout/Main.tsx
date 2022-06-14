@@ -90,7 +90,7 @@ export default function Main({
       {...bind()}
       style={{ touchAction: 'none' }}
       className={classNames(
-        'relative flex flex-grow items-center overflow-hidden bg-gradient-to-br p-4 text-white transition-all',
+        'relative flex grow items-center overflow-hidden bg-gradient-to-br p-4 text-white transition-all',
         colors
       )}
     >

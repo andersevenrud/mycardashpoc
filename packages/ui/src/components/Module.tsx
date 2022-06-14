@@ -8,10 +8,7 @@ export default function Module({
 }: PropsWithChildren<HTMLAttributes<HTMLDivElement>>) {
   return (
     <section
-      className={classNames(
-        'flex flex-grow items-center justify-center',
-        className
-      )}
+      className={classNames('flex grow items-center justify-center', className)}
     >
       {children}
     </section>
