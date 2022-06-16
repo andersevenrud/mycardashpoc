@@ -16,7 +16,6 @@ services:
       - ./data/mpd/playlists:/var/lib/mpd/playlists
   ui:
     restart: on-failure
-    user: node
     build:
       context: packages/ui
     command: ./entrypoint.sh
