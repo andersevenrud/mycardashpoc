@@ -18,13 +18,11 @@ services:
     restart: on-failure
     build:
       context: packages/ui
-    command: ./entrypoint.sh
   api:
     restart: on-failure
     user: node
     build:
       context: packages/api
-    command: ./entrypoint.sh
     volumes:
       - ./data/api/cache:/usr/src/api/cache
     depends_on:
