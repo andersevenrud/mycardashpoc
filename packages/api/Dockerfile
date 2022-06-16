@@ -1,4 +1,6 @@
+#FROM arm64v8/node:16-alpine AS build
 FROM node:16-alpine AS build
+
 WORKDIR /usr/src/api
 COPY . .
 
@@ -12,6 +14,7 @@ RUN npm prune --production --silent --no-audit --no-fund
 RUN npm install --silent --no-audit --no-fund -g clean-modules@2.0.4 && \
       clean-modules -y
 
+#FROM arm64v8/node:16-alpine
 FROM node:16-alpine
 RUN apk add --no-cache dumb-init
 USER node

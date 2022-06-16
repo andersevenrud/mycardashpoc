@@ -38,7 +38,7 @@ services:
       - mpd
   nginx:
     restart: on-failure
-    image: nginx:alpine
+    image: nginx:1-alpine
     ports:
       - 3000:80
     volumes:

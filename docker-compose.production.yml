@@ -19,7 +19,6 @@ services:
     user: node
     build:
       context: packages/ui
-    image: node:16-alpine
     command: ./entrypoint.sh
   api:
     restart: on-failure
@@ -33,7 +32,7 @@ services:
       - mpd
   nginx:
     restart: on-failure
-    image: nginx:alpine
+    image: nginx:1-alpine
     build:
       context: packages/nginx
     ports:
