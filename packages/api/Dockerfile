@@ -1,5 +1,5 @@
-#FROM arm64v8/node:16-alpine AS build
-FROM node:16-alpine AS build
+#FROM arm64v8/node:16-alpine AS build-api
+FROM node:16-alpine AS build-api
 
 WORKDIR /usr/src/api
 COPY . .
@@ -20,7 +20,7 @@ RUN apk add --no-cache dumb-init
 USER node
 ENV NODE_ENV production
 WORKDIR /usr/src/api
-COPY --chown=node:node --from=build /usr/src/api/node_modules /usr/src/api/node_modules
-COPY --chown=node:node --from=build /usr/src/api/dist /usr/src/api/dist
-COPY --chown=node:node --from=build /usr/src/api/package.json /usr/src/api/package.json
+COPY --chown=node:node --from=build-api /usr/src/api/node_modules /usr/src/api/node_modules
+COPY --chown=node:node --from=build-api /usr/src/api/dist /usr/src/api/dist
+COPY --chown=node:node --from=build-api /usr/src/api/package.json /usr/src/api/package.json
 CMD ["dumb-init", "node", "dist/index.js"]
