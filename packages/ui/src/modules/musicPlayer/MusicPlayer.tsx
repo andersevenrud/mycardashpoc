@@ -31,7 +31,7 @@ const useModuleState = () =>
 
 function MusicPlayerModal({ children }: AnyPropsWithChildren) {
   return (
-    <div className="absolute inset-0 z-50 flex flex-col space-y-4 bg-black/90 p-2">
+    <div className="absolute inset-0 z-30 flex flex-col space-y-4 bg-black/90 p-2">
       {children}
     </div>
   )

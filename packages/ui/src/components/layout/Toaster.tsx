@@ -15,7 +15,7 @@ export default function Toaster() {
   const { toasts } = useToaster()
 
   return (
-    <div className="absolute bottom-0 right-0 m-2 space-y-2">
+    <div className="absolute bottom-0 right-0 z-40 m-2 space-y-2">
       {toasts.map((toast, index) => (
         <div className={classNames(toastClassNames(toast))} key={index}>
           {toast.message}

@@ -3,12 +3,14 @@ import { BrowserRouter } from 'react-router-dom'
 import { ModuleProvider } from '~/providers/modules'
 import { ConnectionProvider } from '~/providers/connection'
 import { ToastProvider } from '~/providers/toaster'
+import { KeyboardProvider } from '~/providers/keyboard'
 import { Router } from '~/providers/routes'
 import Toaster from '~/components/layout/Toaster'
 import Header from '~/components/layout/Header'
 import Main from '~/components/layout/Main'
 import Viewport from '~/components/layout/Viewport'
 import PageTransition from '~/components/transitions/PageTransition'
+import SimpleKeyboard from '~/components/Keyboard'
 import createConfiguration from '~/config'
 import type { PropsWithChildren } from 'react'
 import type { PartialConfiguration, Configuration } from '~/config'
@@ -27,7 +29,7 @@ export function Providers({
       <ConnectionProvider configuration={configuration.connection}>
         <ToastProvider configuration={configuration.toaster}>
           <ModuleProvider configuration={configuration.modules}>
-            {children}
+            <KeyboardProvider>{children}</KeyboardProvider>
           </ModuleProvider>
         </ToastProvider>
       </ConnectionProvider>
@@ -54,6 +56,8 @@ export default function App({
             <Router />
           </PageTransition>
           <Toaster />
+
+          {configuration.keyboard && <SimpleKeyboard />}
         </Main>
       </Viewport>
     </Providers>

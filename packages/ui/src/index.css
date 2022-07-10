@@ -41,3 +41,12 @@ code {
 *:not(textarea) {
   @apply select-none;
 }
+
+.hg-button {
+  padding: 2px !important;
+  height: 30px !important;
+}
+
+.hg-button:not(:last-child) {
+  margin-right: 4px !important;
+}

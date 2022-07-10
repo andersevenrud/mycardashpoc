@@ -17,6 +17,7 @@ export interface ModulesConfiguration {
 }
 
 export interface Configuration {
+  keyboard: boolean
   connection: ConnectionConfiguration
   toaster: ToasterConfiguration
   modules: ModulesConfiguration
@@ -35,6 +36,7 @@ export default function createConfiguration(
 
   return merge(
     {
+      keyboard: true,
       modules: {
         state: {
           log: false,
