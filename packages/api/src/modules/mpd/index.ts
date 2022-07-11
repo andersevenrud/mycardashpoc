@@ -1,6 +1,7 @@
 import mpdapi from 'mpd-api'
 import sharp from 'sharp'
-import { cacheFile, wrapped } from '../../utils'
+import vibrant from 'node-vibrant'
+import { createCacheFilename, cacheFile, wrapped } from '../../utils'
 import type { Module } from '../../types'
 
 // FIXME: Types are not correctly exported from mpd-api
@@ -67,6 +68,22 @@ export default {
         })
 
         stream.pipe(res)
+      })
+    )
+
+    // Custom route to get prominent colors from cover
+    router.post(
+      '/cover-colors',
+      wrapped(async ({ req, res }) => {
+        const [name] = req.body as string[]
+        const filename = createCacheFilename(name)
+        const palette = await vibrant.from(filename).getPalette()
+        const newEntries = Object.entries(palette).map(([k, v]) => [
+          k,
+          v?.getHex(),
+        ])
+
+        res.json(Object.fromEntries(newEntries))
       })
     )
 

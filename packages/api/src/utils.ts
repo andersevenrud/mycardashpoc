@@ -19,14 +19,21 @@ export const createHash = (s: string) =>
   crypto.createHash('sha256').update(s).digest('hex')
 
 /**
+ * Creates a cache filename
+ */
+export function createCacheFilename(filename: string) {
+  const newFilename = createHash(filename)
+  return path.join(process.cwd(), 'cache', newFilename)
+}
+
+/**
  * Basic file cache writer/reader
  */
 export async function cacheFile(
   filename: string,
   content: () => Promise<Buffer>
 ): Promise<Readable> {
-  const newFilename = createHash(filename)
-  const dest = path.join(process.cwd(), 'cache', newFilename)
+  const dest = createCacheFilename(filename)
 
   const exists = await fs.promises
     .access(dest, fs.constants.F_OK)
