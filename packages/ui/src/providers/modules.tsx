@@ -13,12 +13,7 @@ import diagnostics from '~/modules/diagnostics'
 import musicPlayer from '~/modules/musicPlayer'
 import type { Dispatch, PropsWithChildren } from 'react'
 import type { ModulesConfiguration } from '~/config'
-import type {
-  AnyState,
-  AnyAction,
-  AnyModule,
-  WebsocketMessage,
-} from '~/types'
+import type { AnyState, AnyAction, AnyModule, WebsocketMessage } from '~/types'
 import type {
   DashboardActions,
   DashboardState,
