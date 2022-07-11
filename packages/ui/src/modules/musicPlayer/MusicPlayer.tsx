@@ -27,6 +27,38 @@ import type { MusicPlayerState } from './types'
 import type { Song, Status } from '~/services/mpd'
 import type { AnyPropsWithChildren } from '~/types'
 
+interface SearchCategory {
+  type: string
+  label: string
+  keys: string[]
+  filter?: (song: Song[]) => Song[]
+}
+
+const categories: SearchCategory[] = [
+  {
+    type: 'song',
+    label: 'Songs',
+    keys: ['title'],
+  },
+  {
+    type: 'artist',
+    label: 'Artists',
+    keys: ['artist'],
+    filter: (songs) => uniqBy(songs, 'artist'),
+  },
+  {
+    type: 'album',
+    label: 'Albums',
+    keys: ['album'],
+    filter: (songs) => uniqBy(songs, 'album'),
+  },
+  {
+    type: 'playlist',
+    label: 'Playlists',
+    keys: ['playlist'],
+  },
+]
+
 const useModuleState = () =>
   useModuleProviderState<MusicPlayerState>('musicPlayer')
 
@@ -79,7 +111,12 @@ function MusicPlayerPlaylistModal() {
       </div>
 
       <div className="grow overflow-auto">
-        <SongList list={list} currentId={currentTrackId} onClick={onClick} />
+        <SongList
+          type="song"
+          list={list}
+          currentId={currentTrackId}
+          onClick={onClick}
+        />
       </div>
     </MusicPlayerModal>
   )
@@ -87,7 +124,9 @@ function MusicPlayerPlaylistModal() {
 
 function MusicPlayerSearchModal() {
   const { dispatch } = useModuleProvider()
+  const [category, setCategory] = useState<SearchCategory>(categories[0])
   const [query, setQuery] = useState<string>('')
+  const [filters, setFilters] = useState<string[]>([])
   const [list, setList] = useState<Song[]>([])
   const wrap = useToasterErrorHandler()
 
@@ -96,34 +135,93 @@ function MusicPlayerSearchModal() {
 
   const onClick = async (track: Song) =>
     wrap(async () => {
-      const song = await api.queue.addid(track.file)
-      await api.playback.playid(song)
-      onClose()
+      if (category.type === 'artist') {
+        setQuery('')
+        setFilters([`(artist == "${track.artist}")`])
+        setCategory(categories[2])
+      } else if (category.type === 'album') {
+        setQuery('')
+        setFilters([...filters, `(album == "${track.album}")`])
+        setCategory(categories[0])
+      } else {
+        const song = await api.queue.addid(track.file)
+        await api.playback.playid(song)
+        onClose()
+      }
     })
 
+  // TODO: Loading
   const onSearch = debounce(
-    async (q: string) =>
+    async (q: string, f?: string[]) =>
       wrap(async () => {
-        const s = ['artist', 'album', 'title']
-          .map((k) => {
-            return `(${k} contains "${q}")`
-          })
-          .map((a) => api.db.search(a))
+        const t = category.type === 'song' ? 'title' : category.type
+        const fs = f || filters
+        const qs = fs.length
+          ? [...fs, `(${t} contains "${q}")`]
+          : category.keys.map((k) => {
+              return `(${k} contains "${q}")`
+            })
 
-        const result = await Promise.all(s)
-        setList(uniqBy(result.flat(), 'file'))
+        const s = qs.filter((s) => !!s).join(' AND ')
+        const result = await api.db.search(`(${s})`)
+        const uniq = uniqBy(result.flat(), 'file')
+        setList(category.filter ? category.filter(uniq) : uniq)
       }),
     200
   )
+
+  const onSetType = (t: SearchCategory) => () => {
+    setFilters([])
+
+    if (category.type === t.type) {
+      if (query === '') {
+        onSearch('', [])
+      } else {
+        setQuery('')
+      }
+    } else {
+      setCategory(t)
+    }
+  }
 
   useEffect(() => {
     onSearch(query)
   }, [query])
 
+  useEffect(() => {
+    setList([])
+
+    if (query === '') {
+      onSearch('')
+    } else {
+      setQuery('')
+    }
+  }, [category])
+
   return (
     <MusicPlayerModal>
+      <div className="space-x-2">
+        {categories.map((button, index) => (
+          <button
+            key={index}
+            onClick={onSetType(button)}
+            className={classNames(
+              'px-2',
+              button.type !== category.type && 'opacity-50'
+            )}
+          >
+            {button.label}
+          </button>
+        ))}
+      </div>
       <div className="flex space-x-2">
-        <SearchInput focus className="grow" onChange={setQuery} />
+        <SearchInput
+          focus
+          className="grow"
+          placeholder="Search..."
+          value={query}
+          onChange={setQuery}
+        />
 
         <div
           className="flex cursor-pointer items-center justify-center px-2"
@@ -134,7 +232,12 @@ function MusicPlayerSearchModal() {
       </div>
 
       <div className="grow overflow-auto">
-        <SongList list={list} onClick={onClick} />
+        <SongList
+          list={list}
+          type={category.type}
+          loading={false}
+          onClick={onClick}
+        />
       </div>
     </MusicPlayerModal>
   )
@@ -292,7 +395,10 @@ export default function MusicPlayer() {
   return (
     <Module className="overflow-hidden">
       <div className="grow overflow-hidden">
-        <SearchInput onOpen={onOpenSearch} />
+        <SearchInput
+          placeholder="Click to open browser..."
+          onOpen={onOpenSearch}
+        />
 
         {searchOpen && <MusicPlayerSearchModal />}
         {playlistOpen && <MusicPlayerPlaylistModal />}

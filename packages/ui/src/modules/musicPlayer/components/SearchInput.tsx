@@ -7,11 +7,15 @@ export default function SearchInput({
   onChange,
   className,
   focus,
+  value,
+  placeholder,
 }: {
   onOpen?: () => void
   onChange?: (value: string) => void
   className?: string
   focus?: boolean
+  value?: string | number
+  placeholder?: string
 }) {
   const ref = useRef<HTMLInputElement | null>(null)
 
@@ -28,7 +32,8 @@ export default function SearchInput({
           ref={ref}
           type="text"
           className="block w-full bg-transparent p-2 placeholder:text-white/50"
-          placeholder="Click to open browser..."
+          placeholder={placeholder}
+          value={value}
           onInput={(ev) => onChange?.((ev.target as HTMLInputElement).value)}
           onClick={() => onOpen?.()}
         />
