@@ -60,6 +60,15 @@ export interface Song {
   cover?: string
 }
 
+export interface CoverColors {
+  DarkMuted: string
+  DarkVibrant: string
+  LightMuted: string
+  LightVibrant: string
+  Muted: string
+  Vibrant: string
+}
+
 /**
  * Client for API
  */
@@ -95,6 +104,8 @@ const querySongs = (endpoint: string, ...data: AnyArguments) =>
  */
 export default {
   cover,
+
+  colors: (file: string) => post<CoverColors>('/cover-colors', file),
 
   db: {
     search: (query: string) => querySongs('/db/search', query),

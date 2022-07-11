@@ -13,6 +13,7 @@ import {
 import { MusicPlayerActionTypes } from './types'
 import { useModuleProviderState, useModuleProvider } from '~/providers/modules'
 import { useToasterErrorHandler } from '~/providers/toaster'
+import { useStoreProvider, StoreActionTypes } from '~/providers/store'
 import { classNames } from '~/utils'
 import api from '~/services/mpd'
 import Module from '~/components/Module'
@@ -245,6 +246,7 @@ function MusicPlayerControls() {
 }
 
 export default function MusicPlayer() {
+  const store = useStoreProvider()
   const { dispatch } = useModuleProvider()
   const { status, song, playlistOpen, searchOpen } = useModuleState()
   const wrap = useToasterErrorHandler()
@@ -254,10 +256,24 @@ export default function MusicPlayer() {
     dispatch({ type: MusicPlayerActionTypes.ToggleSearch, payload: true })
 
   const updateSong = async (s: Status) =>
-    wrap(async () => {
+    wrap(async () =>
       dispatch({
         type: MusicPlayerActionTypes.SetSong,
         payload: await api.queue.id(s.songid),
+      })
+    )
+
+  const updateBackground = async (name: string | null) =>
+    wrap(async () => {
+      let payload = null
+      if (name) {
+        const { DarkVibrant: from, DarkMuted: to } = await api.colors(name)
+        payload = `linear-gradient(to right, ${from}, ${to})`
+      }
+
+      store.dispatch({
+        type: StoreActionTypes.SetBackground,
+        payload,
       })
     })
 
@@ -268,6 +284,10 @@ export default function MusicPlayer() {
     }
     songid.current = id
   }, [status.songid])
+
+  useEffect(() => {
+    updateBackground(song?.file || null)
+  }, [song])
 
   return (
     <Module className="overflow-hidden">

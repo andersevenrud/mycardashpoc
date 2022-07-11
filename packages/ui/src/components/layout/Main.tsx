@@ -2,6 +2,7 @@ import React from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { motion, useDragControls } from 'framer-motion'
 import { useModuleProvider } from '~/providers/modules'
+import { useStoreProvider } from '~/providers/store'
 import { createRoutes } from '~/providers/routes'
 import { classNames } from '~/utils'
 import type { PropsWithChildren, HTMLAttributes } from 'react'
@@ -80,6 +81,7 @@ function useDragNavigation() {
 export default function Main({
   children,
 }: PropsWithChildren<HTMLAttributes<HTMLDivElement>>) {
+  const { state } = useStoreProvider()
   const { currentModule } = useModuleProvider()
   const { onPanEnd, controls } = useDragNavigation()
   const defaultColors = 'from-zinc-800 to-zinc-900'
@@ -91,6 +93,7 @@ export default function Main({
         'relative grow overflow-hidden bg-gradient-to-br text-white transition-all',
         colors
       )}
+      style={{ background: state.background || undefined }}
     >
       <motion.div
         className="absolute inset-0 flex items-center p-4"

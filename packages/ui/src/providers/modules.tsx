@@ -1,13 +1,12 @@
 import React, {
   createContext,
-  useCallback,
   useContext,
   useReducer,
   useState,
   useEffect,
 } from 'react'
-import { differenceWith, isEqual, fromPairs, toPairs } from 'lodash-es'
 import { useLocation } from 'react-router-dom'
+import { reducerLogger } from '~/utils'
 import { ee } from '~/providers/events'
 import dashboard from '~/modules/dashboard'
 import diagnostics from '~/modules/diagnostics'
@@ -15,7 +14,6 @@ import musicPlayer from '~/modules/musicPlayer'
 import type { Dispatch, PropsWithChildren } from 'react'
 import type { ModulesConfiguration } from '~/config'
 import type {
-  AnyReducer,
   AnyState,
   AnyAction,
   AnyModule,
@@ -70,28 +68,6 @@ export const ModuleContext = createContext<{
   state: initialState,
   dispatch: () => ({}),
 })
-
-/**
- * Basic wrapper for logging dispatches and state changes
- * This is only for debugging purposes
- */
-const reducerLogger = (reducer: AnyReducer) =>
-  useCallback(
-    (state: AnyState, action: AnyAction) => {
-      const next = reducer(state, action)
-      const changes = fromPairs(
-        differenceWith(toPairs(next), toPairs(state), isEqual)
-      )
-
-      console.group(action.type)
-      console.debug('Payload', action.payload)
-      console.debug('State diff', changes)
-      console.groupEnd()
-
-      return next
-    },
-    [reducer]
-  )
 
 /**
  * All reducers, namespaced

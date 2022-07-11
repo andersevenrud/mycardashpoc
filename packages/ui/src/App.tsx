@@ -4,6 +4,7 @@ import { ModuleProvider } from '~/providers/modules'
 import { ConnectionProvider } from '~/providers/connection'
 import { ToastProvider } from '~/providers/toaster'
 import { KeyboardProvider } from '~/providers/keyboard'
+import { StoreProvider } from '~/providers/store'
 import { Router } from '~/providers/routes'
 import Toaster from '~/components/layout/Toaster'
 import Header from '~/components/layout/Header'
@@ -26,13 +27,15 @@ export function Providers({
 }>) {
   return (
     <BrowserRouter>
-      <ConnectionProvider configuration={configuration.connection}>
-        <ToastProvider configuration={configuration.toaster}>
-          <ModuleProvider configuration={configuration.modules}>
-            <KeyboardProvider>{children}</KeyboardProvider>
-          </ModuleProvider>
-        </ToastProvider>
-      </ConnectionProvider>
+      <StoreProvider configuration={configuration.store}>
+        <ConnectionProvider configuration={configuration.connection}>
+          <ToastProvider configuration={configuration.toaster}>
+            <ModuleProvider configuration={configuration.modules}>
+              <KeyboardProvider>{children}</KeyboardProvider>
+            </ModuleProvider>
+          </ToastProvider>
+        </ConnectionProvider>
+      </StoreProvider>
     </BrowserRouter>
   )
 }

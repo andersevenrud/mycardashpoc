@@ -16,11 +16,19 @@ export interface ModulesConfiguration {
   }
 }
 
+export interface StoreConfiguration {
+  state: {
+    /** Toggling this in a dev environment will lead to crashing */
+    log: boolean
+  }
+}
+
 export interface Configuration {
   keyboard: boolean
   connection: ConnectionConfiguration
   toaster: ToasterConfiguration
   modules: ModulesConfiguration
+  store: StoreConfiguration
 }
 
 export type PartialConfiguration = RecursivePartial<Configuration>
@@ -37,6 +45,11 @@ export default function createConfiguration(
   return merge(
     {
       keyboard: true,
+      store: {
+        state: {
+          log: false,
+        },
+      },
       modules: {
         state: {
           log: false,
