@@ -31,7 +31,7 @@ Runs on `http://localhost`.
 This sofware is in no way complete
 
 * Playlist editing
-* Show OBD from prometheus
+* Finish OBD integration
 
 ## Manual
 

@@ -1,24 +1,15 @@
-export interface OBDConfiguration {
-  pollFreq: number
-  pollers: string[]
-}
-
 export interface Configuration {
-  obd: OBDConfiguration
+  prometheus: {
+    endpoint: string
+    baseURL: string
+  }
 }
 
 export default function createConfiguration(): Configuration {
   return {
-    obd: {
-      pollFreq: 2000,
-      pollers: [
-        // 'vss'
-        // 'rpm'
-        // 'temp'
-        // 'load_pct'
-        // 'map'
-        // 'frp'
-      ],
+    prometheus: {
+      endpoint: 'https://prometheus',
+      baseURL: '/api/v1',
     },
   }
 }
