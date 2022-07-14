@@ -6,9 +6,7 @@ services:
     build:
       context: packages/obd
     volumes:
-      - type: bind
-        source: /dev/null
-        target: /dev/rfcomm0
+      - ${OBD_PORT:-/dev/rfcomm0}:/dev/rfcomm0
   prometheus:
     image: prom/prometheus:v2.37.0
     restart: on-failure
@@ -16,7 +14,7 @@ services:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
     volumes:
-      - ./packages/prometheus/etc:/etc/prometheus/
+      - ./packages/prometheus/etc:/etc/prometheus/:ro
       - prometheus_data:/prometheus
   mpd:
     restart: on-failure

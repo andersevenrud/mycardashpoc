@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 # Source: https://github.com/zaneclaes/node-pi-obd-monitor
-import os, sys, obd, logging, time
-from prometheus_client import start_http_server, Summary, Gauge, Info
+import obd
+import logging
+import time
+from prometheus_client import start_http_server, Gauge
 
 http_port = 8000
 poll_interval = 1.0
@@ -11,8 +13,10 @@ metrics = {}
 """
 Monitor a single OBDII command as a Prometheus metric.
 """
+
+
 class CommandMetric():
-    def __init__(self, command, metric_prefix = 'obd_'):
+    def __init__(self, command, metric_prefix='obd_'):
         self.command = command
         self.response = None
         self.metric = None
@@ -38,25 +42,23 @@ class CommandMetric():
             if self.metric is None:
                 self.metric = Gauge(self.metric_prefix + self.name, self.unit)
             self.metric.set(self.response.value.magnitude)
-        # elif isinstance(self.response.value, str):
-        #     if self.metric is None:
-        #         self.metric = Info(self.metric_prefix + self.name, type(self.response.value))
-        #     self.metric.info({'value': str(self.response.value)})
         elif isinstance(self.response.value, bool):
             if self.metric is None:
                 self.metric = Gauge(self.metric_prefix + self.name, self.unit)
             self.metric.set(1 if self.response.value else 0)
-        # or isinstance(self.response.value, list) or isinstance(self.response.value, tuple)
+
 
 """
 Ensure that the `connection` global is actually connected, and instatiate `metric` objects.
 """
+
+
 def connect():
     global connection, metrics
     if connection and connection.status() == obd.utils.OBDStatus.CAR_CONNECTED:
         return True
     log.info('connecting to car...')
-    connection = obd.OBD()
+    connection = obd.OBD(baudrate=9600)
     if connection.status() != obd.utils.OBDStatus.CAR_CONNECTED:
         return False
     metrics = {}
@@ -64,12 +66,13 @@ def connect():
         metric = CommandMetric(command)
         metrics[metric.name] = metric
 
+
 if __name__ == '__main__':
     obd.logger.setLevel(obd.logging.INFO)
     log = logging.getLogger('obd.monitor')
 
     log.warning('starting prometheus on port %s' % http_port)
-    start_http_server(http_port) # prometheus
+    start_http_server(http_port)  # prometheus
 
     # Continuously poll the metrics.
     while True:

@@ -49,7 +49,20 @@ Copy your music library to `data/mpd/music` and it will get indexed automaticall
 
 ### OBD Connection
 
-Requires a (USB) serial connection to a standard OBD-II interface.
+Requires a ELM327 (USB) serial connection to a standard OBD-II interface.
+
+You can install a [ELM327 Emulator](https://github.com/Ircama/ELM327-emulator) for debugging purposes:
+
+```bash
+python3 -m pip install ELM327-emulator
+python3 -m elm -s car
+```
+
+Make a note of the port given, then put it in your dotenv file:
+
+```bash
+echo "OBD_PORT=/dev/pts/15 >> .env"
+```
 
 ## License
 
