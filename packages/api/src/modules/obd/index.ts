@@ -2,6 +2,21 @@ import { PrometheusDriver } from 'prometheus-query'
 import { wrapped } from '../../utils'
 import type { Module } from '../../types'
 
+const pollers = [
+  {
+    name: 'speed',
+    query: 'obd_speed{job="obd"}',
+  },
+  {
+    name: 'rpm',
+    query: 'obd_rpm{job="obd"}',
+  },
+  {
+    name: 'coolantTemp',
+    query: 'obd_coolant_temp{job="obd"}',
+  },
+]
+
 /**
  * OBD Module
  */
@@ -47,18 +62,19 @@ export default {
     // TODO: Find a way to stream the changes instead
     const interval = setInterval(async () => {
       try {
-        const {
-          result: [speed],
-        } = await prom.instantQuery('obd_speed{job="obd"}')
+        const results = await Promise.all(
+          pollers.map(async ({ name, query }) => {
+            const {
+              result: [result],
+            } = await prom.instantQuery(query)
 
-        const {
-          result: [rpm],
-        } = await prom.instantQuery('obd_rpm{job="obd"}')
+            return [name, parseInt(result.value.value)]
+          })
+        )
 
-        send('data', {
-          speed: parseInt(speed.value.value),
-          rpm: parseInt(rpm.value.value),
-        })
+        const data = Object.fromEntries(results)
+
+        send('data', data)
       } catch (e) {
         console.error(e)
       }
