@@ -31,10 +31,7 @@ Runs on `http://localhost`.
 This sofware is in no way complete
 
 * Playlist editing
-* Artist browser w/filter
-* Album browser w/filter
-* OBD Diagnostics service
-* Prometheus for OBD stats
+* Show OBD from prometheus
 
 ## Manual
 
