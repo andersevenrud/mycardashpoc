@@ -1,12 +1,25 @@
 import axios from 'axios'
-import type { AnyArguments } from '~/types'
 
 export interface OBDMetric {
-  name: string
+  metric: {
+    name: string
+    labels: Record<string, string>
+  }
+  values: {
+    time: string
+    value: number
+  }[]
 }
 
 export interface OBDErrorCode {
   name: string
+}
+
+export interface OBDMetricBody {
+  startsAt: string
+  endsAt: string
+  name: string
+  step: number
 }
 
 /**
@@ -19,14 +32,14 @@ const api = axios.create({
 /**
  * Wrapper for making a POST request
  */
-const post = <T>(endpoint: string, ...data: AnyArguments): Promise<T> =>
+const post = <T>(endpoint: string, data?: any): Promise<T> =>
   api.post(endpoint, data).then((response) => response.data)
 
 /**
  * Public OBD API
  */
 export default {
-  metrics: () => post<OBDMetric[]>('/metrics'),
+  metrics: (body: OBDMetricBody) => post<OBDMetric[]>('/metrics', body),
 
   codes: {
     read: () => post<OBDErrorCode[]>('/codes/read'),

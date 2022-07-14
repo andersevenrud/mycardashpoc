@@ -9,7 +9,10 @@ export default function Module({
 }: PropsWithChildren<HTMLAttributes<HTMLDivElement>>) {
   return (
     <section
-      className={classNames('flex grow items-center justify-center', className)}
+      className={classNames(
+        'absolute inset-0 flex max-h-full items-center justify-center overflow-hidden p-4',
+        className
+      )}
       {...props}
     >
       {children}

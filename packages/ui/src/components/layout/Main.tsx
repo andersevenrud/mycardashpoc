@@ -96,7 +96,7 @@ export default function Main({
       style={{ background: state.background || undefined }}
     >
       <motion.div
-        className="absolute inset-0 flex items-center p-4"
+        className="absolute inset-0"
         onPanEnd={onPanEnd}
         drag={true}
         dragSnapToOrigin={true}

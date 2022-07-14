@@ -1,5 +1,6 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link, Outlet } from 'react-router-dom'
+import { subMinutes } from 'date-fns'
 import { useToasterErrorHandler, useToaster } from '~/providers/toaster'
 import Module from '~/components/Module'
 import api from '~/services/obd'
@@ -55,10 +56,17 @@ export function DiagnosticsCodes() {
 export function DiagnosticsMetrics() {
   const wrap = useToasterErrorHandler()
   const { addToast } = useToaster()
+  const [table, setTable] = useState<[string, number][]>([])
 
-  useEffect(() => {
+  const load = () =>
     wrap(async () => {
-      const result = await api.metrics()
+      const now = new Date()
+      const result = await api.metrics({
+        startsAt: subMinutes(now, 1).toISOString(),
+        endsAt: now.toISOString(),
+        step: 1,
+        name: '',
+      })
 
       if (!result.length) {
         addToast({
@@ -66,12 +74,45 @@ export function DiagnosticsMetrics() {
           message: 'Not metrics found',
         })
       }
+
+      const tableValues = result
+        .filter(({ metric }) => {
+          return metric.name.startsWith('obd_')
+        })
+        .map(({ metric, values }) => {
+          return [
+            metric.name.replace('obd_', ''),
+            values[values.length - 1].value,
+          ]
+        })
+
+      setTable(tableValues as [string, number][])
     })
+
+  const onRefresh = () => load()
+
+  useEffect(() => {
+    load()
   }, [])
 
   return (
-    <div>
-      <Button to="/diagnostics">Back</Button>
+    <div className="flex h-full shrink grow flex-col space-y-4 overflow-hidden">
+      <div className="flex justify-end space-x-2">
+        <Button onClick={onRefresh}>Refresh</Button>
+        <Button to="/diagnostics">Back</Button>
+      </div>
+      <div className="shrink grow overflow-auto">
+        <table className="w-full">
+          <tbody>
+            {table.map(([name, value]) => (
+              <tr key={name}>
+                <td>{name}</td>
+                <td>{value}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   )
 }
@@ -102,9 +143,7 @@ export function DiagnosticsHome() {
 export default function Diagnostics() {
   return (
     <Module>
-      <div>
-        <Outlet />
-      </div>
+      <Outlet />
     </Module>
   )
 }
