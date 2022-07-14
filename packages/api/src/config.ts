@@ -8,7 +8,7 @@ export interface Configuration {
 export default function createConfiguration(): Configuration {
   return {
     prometheus: {
-      endpoint: 'https://prometheus',
+      endpoint: 'http://prometheus:9090',
       baseURL: '/api/v1',
     },
   }
