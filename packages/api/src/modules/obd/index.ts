@@ -39,7 +39,8 @@ export default {
         const start = new Date(startsAt)
         const end = new Date(endsAt)
         const { result } = await prom.rangeQuery(q, start, end, step)
-        res.json(result)
+        const series = result.map(({ metric, values }) => ({ metric, values }))
+        res.json(series)
       })
     )
 

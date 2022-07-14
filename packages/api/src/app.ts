@@ -117,7 +117,7 @@ export async function createApp(config: Configuration) {
     res.json({
       message,
       stack,
-      meta,
+      //meta,
     })
   })
 
