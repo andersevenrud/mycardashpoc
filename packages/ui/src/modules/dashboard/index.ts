@@ -16,12 +16,12 @@ export default {
   },
 
   initialState: {
-    speed: 100,
-    rpm: 2500,
-    distance: 1234,
-    totalDistance: 200000,
-    distanceLeft: 123,
-    coolantTemp: 90,
+    speed: 0,
+    rpm: 0,
+    distance: -1,
+    totalDistance: -1,
+    distanceLeft: -1,
+    coolantTemp: -1,
   },
 
   reducer(state, action) {
