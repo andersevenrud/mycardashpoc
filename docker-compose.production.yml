@@ -1,6 +1,14 @@
 version: "2"
 
 services:
+  obd_exporter:
+    restart: on-failure
+    build:
+      context: packages/obd
+    volumes:
+      - type: bind
+        source: /dev/null
+        target: /dev/rfcomm0
   mpd:
     restart: on-failure
     user: mpd
