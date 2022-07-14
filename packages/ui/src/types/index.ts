@@ -45,6 +45,11 @@ export interface ModuleRoute {
   background: string
   icon: IconDefinition
   element: () => JSX.Element
+  routes?: {
+    index?: boolean
+    path?: string
+    element: () => JSX.Element
+  }[]
 }
 
 export interface Module<S, A> {

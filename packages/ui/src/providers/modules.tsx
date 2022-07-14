@@ -77,7 +77,7 @@ const mainReducer = (state: ModuleState, action: AnyAction) => ({
  * Get current module based on location
  */
 const findCurrentModule = (pathname: string) =>
-  modules.find(({ route: { path } }) => path === pathname) || null
+  modules.find(({ route: { path } }) => pathname.startsWith(path)) || null
 
 /**
  * Trigger all module listeners with following message

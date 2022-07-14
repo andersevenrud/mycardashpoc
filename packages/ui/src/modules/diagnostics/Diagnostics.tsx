@@ -1,29 +1,38 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import { Link, Outlet } from 'react-router-dom'
 import { useToasterErrorHandler, useToaster } from '~/providers/toaster'
 import Module from '~/components/Module'
 import api from '~/services/obd'
-import type { PropsWithChildren, HTMLAttributes } from 'react'
+import type { PropsWithChildren } from 'react'
 
 function Button({
-  children,
+  to,
   onClick,
-}: PropsWithChildren<HTMLAttributes<HTMLButtonElement>>) {
+  children,
+}: PropsWithChildren<{ to?: string; onClick?: () => void }>) {
+  const classNames =
+    'flex items-center justify-center rounded-xl bg-black/50 p-8 font-bold shadow-lg hover:bg-black/80 hover:shadow-sm'
+
+  if (to) {
+    return (
+      <Link className={classNames} to={to}>
+        {children}
+      </Link>
+    )
+  }
+
   return (
-    <button
-      type="button"
-      className="flex items-center justify-center rounded-xl bg-black/50 p-8 font-bold shadow-lg hover:bg-black/80 hover:shadow-sm"
-      onClick={onClick}
-    >
+    <button type="button" className={classNames} onClick={onClick}>
       {children}
     </button>
   )
 }
 
-export default function Diagnostics() {
+export function DiagnosticsCodes() {
   const wrap = useToasterErrorHandler()
   const { addToast } = useToaster()
 
-  const onViewCodesClick = () =>
+  useEffect(() => {
     wrap(async () => {
       const result = await api.codes.read()
 
@@ -34,8 +43,20 @@ export default function Diagnostics() {
         })
       }
     })
+  }, [])
 
-  const onViewMetricsClick = () =>
+  return (
+    <div>
+      <Button to="/diagnostics">Back</Button>
+    </div>
+  )
+}
+
+export function DiagnosticsMetrics() {
+  const wrap = useToasterErrorHandler()
+  const { addToast } = useToaster()
+
+  useEffect(() => {
     wrap(async () => {
       const result = await api.metrics()
 
@@ -46,6 +67,18 @@ export default function Diagnostics() {
         })
       }
     })
+  }, [])
+
+  return (
+    <div>
+      <Button to="/diagnostics">Back</Button>
+    </div>
+  )
+}
+
+export function DiagnosticsHome() {
+  const wrap = useToasterErrorHandler()
+  const { addToast } = useToaster()
 
   const onClearCodesClick = () =>
     wrap(async () => {
@@ -58,13 +91,19 @@ export default function Diagnostics() {
     })
 
   return (
+    <div className="grid grid-cols-3 gap-4">
+      <Button to="/diagnostics/codes">View codes</Button>
+      <Button to="/diagnostics/metrics">View metrics</Button>
+      <Button onClick={onClearCodesClick}>Clear Codes</Button>
+    </div>
+  )
+}
+
+export default function Diagnostics() {
+  return (
     <Module>
       <div>
-        <div className="grid grid-cols-3 gap-4">
-          <Button onClick={onViewCodesClick}>View codes</Button>
-          <Button onClick={onViewMetricsClick}>View metrics</Button>
-          <Button onClick={onClearCodesClick}>Clear Codes</Button>
-        </div>
+        <Outlet />
       </div>
     </Module>
   )

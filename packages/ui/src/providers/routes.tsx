@@ -7,11 +7,16 @@ import Home from '~/modules/home/Home'
  * Creates a set of routes for exposed modules.
  */
 export const createRoutes = () => [
+  ...modules.map(({ route: { path, element, routes = [] } }) => ({
+    path,
+    element,
+    routes,
+  })),
   {
     path: '*',
     element: Home,
+    routes: [],
   },
-  ...modules.map(({ route: { path, element } }) => ({ path, element })),
 ]
 
 /**
@@ -23,8 +28,17 @@ export function Router() {
 
   return (
     <Routes location={location}>
-      {routes.map(({ path, element: Component }) => (
-        <Route path={path} key={path} element={<Component />} />
+      {routes.map(({ path, element: Component, routes }) => (
+        <Route path={path} key={path} element={<Component />}>
+          {routes.map(({ index, path: subpath, element: SubComponent }) => (
+            <Route
+              index={index}
+              path={subpath}
+              key={`${path}/${subpath}`}
+              element={<SubComponent />}
+            />
+          ))}
+        </Route>
       ))}
     </Routes>
   )
