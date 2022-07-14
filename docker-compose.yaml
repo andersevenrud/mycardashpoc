@@ -9,6 +9,15 @@ services:
       - type: bind
         source: /dev/null
         target: /dev/rfcomm0
+  prometheus:
+    image: prom/prometheus:v2.37.0
+    restart: on-failure
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    volumes:
+      - ./packages/prometheus/etc:/etc/prometheus/
+      - prometheus_data:/prometheus
   mpd:
     restart: on-failure
     user: mpd
@@ -54,3 +63,6 @@ services:
     depends_on:
       - ui
       - api
+
+volumes:
+  prometheus_data:
