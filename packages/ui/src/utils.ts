@@ -66,8 +66,11 @@ export const isInputElement = (el: HTMLElement) =>
 export function isInsideScrollable(target: HTMLElement) {
   let el: HTMLElement | null = target
   while (el) {
-    if (el.scrollHeight > el.offsetHeight) {
-      return true
+    if (el.scrollHeight > el.offsetHeight || el.scrollWidth > el.offsetWidth) {
+      // FIXME: This is just because in certain cases using truncate will squash a box slightly
+      if (!el.classList.contains('truncate')) {
+        return true
+      }
     }
 
     el = el.parentNode as HTMLElement
