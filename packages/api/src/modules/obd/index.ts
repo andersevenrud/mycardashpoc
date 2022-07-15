@@ -50,7 +50,6 @@ export default {
       wrapped(async ({ res }) => {
         const response = await fetch(`${config.obd.endpoint}/read`)
         res.json(response.json())
-
       })
     )
 
