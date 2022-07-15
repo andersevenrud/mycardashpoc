@@ -4,7 +4,7 @@ import { motion, useDragControls } from 'framer-motion'
 import { useModuleProvider } from '~/providers/modules'
 import { useStoreProvider } from '~/providers/store'
 import { createRoutes } from '~/providers/routes'
-import { classNames } from '~/utils'
+import { isInputElement, isInsideScrollable, classNames } from '~/utils'
 import type { PropsWithChildren, HTMLAttributes } from 'react'
 import type { PanInfo } from 'framer-motion'
 import type { NavigationDirection } from '~/types'
@@ -20,15 +20,16 @@ function useDragNavigation() {
   const thresholdX = window.innerWidth / 4
   const thresholdY = window.innerHeight / 4
 
-  const onPanEnd = (event: Event, { offset: { x: mx, y: my } }: PanInfo) => {
-    const target = event.target as HTMLElement
-    if (
-      ['INPUT', 'TEXTAREA'].includes(target?.tagName) ||
-      target?.dataset.input === 'true'
-    ) {
+  const onPanStart = (ev: MouseEvent) => {
+    const target = ev.target as HTMLElement
+    if (isInputElement(target) || isInsideScrollable(target)) {
       return
     }
 
+    controls.start(ev)
+  }
+
+  const onPanEnd = (_: MouseEvent, { offset: { x: mx, y: my } }: PanInfo) => {
     let direction: NavigationDirection | null = null
 
     const currentIndex =
@@ -73,6 +74,7 @@ function useDragNavigation() {
   }
 
   return {
+    onPanStart,
     onPanEnd,
     controls,
   }
@@ -83,7 +85,7 @@ export default function Main({
 }: PropsWithChildren<HTMLAttributes<HTMLDivElement>>) {
   const { state } = useStoreProvider()
   const { currentModule } = useModuleProvider()
-  const { onPanEnd, controls } = useDragNavigation()
+  const { onPanEnd, onPanStart, controls } = useDragNavigation()
   const defaultColors = 'from-zinc-800 to-zinc-900'
   const colors = currentModule?.route?.background || defaultColors
 
@@ -96,13 +98,16 @@ export default function Main({
       style={{ background: state.background || undefined }}
     >
       <motion.div
-        className="absolute inset-0"
+        className="absolute inset-0 touch-none"
+        onPanStart={onPanStart}
         onPanEnd={onPanEnd}
         drag={true}
         dragSnapToOrigin={true}
         dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
         dragElastic={0.05}
         dragControls={controls}
+        dragListener={false}
+        dragDirectionLock
       >
         {children}
       </motion.div>

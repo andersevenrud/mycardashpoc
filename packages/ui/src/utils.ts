@@ -53,3 +53,25 @@ export const reducerLogger = (reducer: AnyReducer) =>
     },
     [reducer]
   )
+
+/**
+ * Checks if given element is an input element
+ */
+export const isInputElement = (el: HTMLElement) =>
+  ['INPUT', 'TEXTAREA'].includes(el?.tagName) || el?.dataset.input === 'true'
+
+/**
+ * Checks if target is inside some kind of scrollable
+ */
+export function isInsideScrollable(target: HTMLElement) {
+  let el: HTMLElement | null = target
+  while (el) {
+    if (el.scrollHeight > el.offsetHeight) {
+      return true
+    }
+
+    el = el.parentNode as HTMLElement
+  }
+
+  return false
+}
