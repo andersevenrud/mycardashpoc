@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { motion, useDragControls } from 'framer-motion'
 import { useModuleProvider } from '~/providers/modules'
@@ -15,6 +15,7 @@ function useDragNavigation() {
   const navigate = useNavigate()
   const routes = createRoutes()
   const controls = useDragControls()
+  const [dragging, setDragging] = useState(false)
 
   // TODO: Add values based on aspect ratio or corners ?
   const thresholdX = window.innerWidth / 4
@@ -22,56 +23,65 @@ function useDragNavigation() {
 
   const onPanStart = (ev: MouseEvent) => {
     const target = ev.target as HTMLElement
-    if (isInputElement(target) || isInsideScrollable(target)) {
+    const skip = isInputElement(target) || isInsideScrollable(target)
+
+    setDragging(!skip)
+
+    if (skip) {
       return
     }
 
     controls.start(ev)
   }
 
-  const onPanEnd = (_: MouseEvent, { offset: { x: mx, y: my } }: PanInfo) => {
-    let direction: NavigationDirection | null = null
+  const onPanEnd = useCallback(
+    (_: MouseEvent, { offset: { x: mx, y: my } }: PanInfo) => {
+      if (!dragging) return
 
-    const currentIndex =
-      routes.slice(1).findIndex((r) => r.path === location.pathname) + 1
+      let direction: NavigationDirection | null = null
 
-    let result
-    if (my < -thresholdY || my > thresholdY) {
-      if (currentIndex !== 0) {
-        direction = my < -thresholdY ? 'up' : 'down'
-        result = '/'
-      }
-    } else if (mx > thresholdX) {
-      const newIndex = Math.max(0, currentIndex - 1)
-      if (newIndex !== currentIndex) {
-        result = routes[newIndex].path
-        direction = 'left'
-      }
-    } else if (mx < -thresholdX) {
-      const newIndex = Math.min(routes.length - 1, currentIndex + 1)
-      if (newIndex !== currentIndex) {
-        result = routes[newIndex].path
-        direction = 'right'
-      }
-    }
+      const currentIndex =
+        routes.slice(1).findIndex((r) => r.path === location.pathname) + 1
 
-    if (result && direction) {
-      if (currentModule?.beforeNavigate) {
-        const moduleState = state[currentModule.name]
-        const aborter = currentModule.beforeNavigate(
-          direction,
-          moduleState,
-          dispatch
-        )
-
-        if (aborter === false) {
-          return
+      let result
+      if (my < -thresholdY || my > thresholdY) {
+        if (currentIndex !== 0) {
+          direction = my < -thresholdY ? 'up' : 'down'
+          result = '/'
+        }
+      } else if (mx > thresholdX) {
+        const newIndex = Math.max(0, currentIndex - 1)
+        if (newIndex !== currentIndex) {
+          result = routes[newIndex].path
+          direction = 'left'
+        }
+      } else if (mx < -thresholdX) {
+        const newIndex = Math.min(routes.length - 1, currentIndex + 1)
+        if (newIndex !== currentIndex) {
+          result = routes[newIndex].path
+          direction = 'right'
         }
       }
 
-      navigate(result)
-    }
-  }
+      if (result && direction) {
+        if (currentModule?.beforeNavigate) {
+          const moduleState = state[currentModule.name]
+          const aborter = currentModule.beforeNavigate(
+            direction,
+            moduleState,
+            dispatch
+          )
+
+          if (aborter === false) {
+            return
+          }
+        }
+
+        navigate(result)
+      }
+    },
+    [dragging, location]
+  )
 
   return {
     onPanStart,
