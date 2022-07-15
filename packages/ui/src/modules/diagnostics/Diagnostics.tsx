@@ -113,7 +113,9 @@ export function DiagnosticsMetrics() {
       }
 
       const tableValues = result.filter(({ metric }) => {
-        return metric.name.startsWith('obd_')
+        return (
+          metric.name.startsWith('obd_') && !metric.name.startsWith('obd_dtc')
+        )
       })
 
       setTable(tableValues)
