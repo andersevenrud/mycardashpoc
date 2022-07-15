@@ -13,7 +13,8 @@ RUN pip3 install --upgrade \
   setuptools \
   wheel \
   prometheus_client \
-  pyserial
+  pyserial \
+  bottle
 
 RUN git clone https://github.com/brendan-w/python-OBD.git && \
     cd python-OBD && \

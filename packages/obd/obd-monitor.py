@@ -1,18 +1,23 @@
 #!/usr/bin/env python3
-# Source: https://github.com/zaneclaes/node-pi-obd-monitor
+# Based on: https://github.com/zaneclaes/node-pi-obd-monitor
 import obd
 import logging
 import time
+import threading
+from bottle import route, run
 from prometheus_client import start_http_server, Gauge
 
+api_http_port = 8080
 http_port = 8000
 poll_interval = 1.0
 connection = None
 metrics = {}
 
-"""
-Monitor a single OBDII command as a Prometheus metric.
-"""
+
+p = threading.Thread(target=run, kwargs=dict(
+    host='0.0.0.0', port=api_http_port))
+
+lock = threading.Lock()
 
 
 class CommandMetric():
@@ -48,23 +53,42 @@ class CommandMetric():
             self.metric.set(1 if self.response.value else 0)
 
 
-"""
-Ensure that the `connection` global is actually connected, and instatiate `metric` objects.
-"""
-
-
 def connect():
-    global connection, metrics
-    if connection and connection.status() == obd.utils.OBDStatus.CAR_CONNECTED:
-        return True
-    log.info('connecting to car...')
-    connection = obd.OBD(baudrate=9600)
+    with lock:
+        global connection, metrics
+        if connection and connection.status() == obd.utils.OBDStatus.CAR_CONNECTED:
+            return True
+        log.info('connecting to car...')
+        connection = obd.OBD(baudrate=9600)
+        if connection.status() != obd.utils.OBDStatus.CAR_CONNECTED:
+            return False
+        metrics = {}
+        for command in connection.supported_commands:
+            metric = CommandMetric(command)
+            metrics[metric.name] = metric
+
+
+@route('/read')
+def read():
+    with lock:
+        if connection.status() != obd.utils.OBDStatus.CAR_CONNECTED:
+            return {'error': 'no connection'}
+
+        response = connection.query(obd.commands.GET_DTC)
+        if response.is_null():
+            return {'error': 'no response'}
+
+        return {'result': response.value}
+
+
+@route('/clear', method='POST')
+def clear():
     if connection.status() != obd.utils.OBDStatus.CAR_CONNECTED:
-        return False
-    metrics = {}
-    for command in connection.supported_commands:
-        metric = CommandMetric(command)
-        metrics[metric.name] = metric
+        return {'error': 'no connection'}
+
+    connection.query(obd.commands.CLEAR_DTC)
+
+    return {'result': 'True'}
 
 
 if __name__ == '__main__':
@@ -73,6 +97,8 @@ if __name__ == '__main__':
 
     log.warning('starting prometheus on port %s' % http_port)
     start_http_server(http_port)  # prometheus
+
+    p.start()
 
     # Continuously poll the metrics.
     while True:
