@@ -83,12 +83,13 @@ def read():
 
 @route('/clear', method='POST')
 def clear():
-    if connection.status() != obd.utils.OBDStatus.CAR_CONNECTED:
-        return {'error': 'no connection'}
+    with lock:
+        if connection.status() != obd.utils.OBDStatus.CAR_CONNECTED:
+            return {'error': 'no connection'}
 
-    connection.query(obd.commands.CLEAR_DTC)
+        connection.query(obd.commands.CLEAR_DTC)
 
-    return {'result': 'True'}
+        return {'result': 'True'}
 
 
 if __name__ == '__main__':
