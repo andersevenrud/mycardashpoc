@@ -1,5 +1,7 @@
 import axios from 'axios'
 
+export type OBDErrorCode = [string, string]
+
 export interface OBDMetric {
   metric: {
     name: string
@@ -9,10 +11,6 @@ export interface OBDMetric {
     time: string
     value: number
   }[]
-}
-
-export interface OBDErrorCode {
-  name: string
 }
 
 export interface OBDMetricBody {
