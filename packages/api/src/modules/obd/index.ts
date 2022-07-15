@@ -1,3 +1,4 @@
+import fetch from 'cross-fetch'
 import { PrometheusDriver } from 'prometheus-query'
 import { wrapped } from '../../utils'
 import type { Module } from '../../types'
@@ -44,19 +45,22 @@ export default {
       })
     )
 
-    // TODO: Implement
     router.post(
       '/codes/read',
       wrapped(async ({ res }) => {
-        res.json([])
+        const response = await fetch(`${config.obd.endpoint}/read`)
+        res.json(response.json())
+
       })
     )
 
-    // TODO: Implement
     router.post(
       '/codes/clear',
       wrapped(async ({ res }) => {
-        res.json(true)
+        const response = await fetch(`${config.obd.endpoint}/clear`, {
+          method: 'POST',
+        })
+        res.json(response.json())
       })
     )
 
@@ -69,7 +73,7 @@ export default {
               result: [result],
             } = await prom.instantQuery(query)
 
-            return [name, parseInt(result.value.value)]
+            return [name, parseInt(result?.value?.value)]
           })
         )
 
