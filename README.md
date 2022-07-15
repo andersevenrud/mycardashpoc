@@ -4,6 +4,23 @@ Personal RasPi console for my car for basic diagnostics and media playback.
 
 Integrates with OBD and MPD and serves a simple dashboard with pluggable modules.
 
+* General
+  * Touch optimized interface
+  * Built for small screens
+  * Virtual keyboard
+  * Gestures
+  * Data logging
+* Dashboard
+  * Instrument cluster
+  * General information
+* Music player
+  * Basic controls
+  * Music browser and playlist
+  * Album art and theme support
+* Diagnostics
+  * DTC Reading and Clearing
+  * Metrics inspection
+
 ![screenshot](https://user-images.githubusercontent.com/161548/173695326-5e952c53-6d44-4795-9618-be2de56aadc1.png)
 
 ## Requirements
@@ -14,7 +31,7 @@ Designed to run in some sort of kiosk mode.
 
 ## Development
 
-To start a development enviroment, run `docker-compose up`.
+To start a development enviroment, run `docker compose up`.
 
 Runs on `http://localhost:3000`.
 
@@ -22,7 +39,7 @@ Uses ESLint and Prettier to maintain code style and Conventional Commits.
 
 ## Deployment
 
-For a production environment, run `docker-compose -f docker-compose.production.yml up`.
+For a production environment, run `docker compose -f docker-compose.production.yml up`.
 
 Runs on `http://localhost`.
 
@@ -31,7 +48,7 @@ Runs on `http://localhost`.
 This sofware is in no way complete
 
 * Playlist editing
-* Finish OBD integration
+* More OBD integration
 
 ## Manual
 
