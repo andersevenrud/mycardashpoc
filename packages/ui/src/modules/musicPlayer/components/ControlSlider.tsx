@@ -94,14 +94,14 @@ export function useSlider({
       }
     }
 
-    knobEl?.addEventListener('mousedown', onMouseDown)
-    window?.addEventListener('mouseup', onMouseUp)
-    window?.addEventListener('mousemove', onMouseMove)
+    knobEl?.addEventListener('pointerdown', onMouseDown)
+    window?.addEventListener('pointerup', onMouseUp)
+    window?.addEventListener('pointermove', onMouseMove)
 
     return () => {
-      knobEl?.removeEventListener('mousedown', onMouseDown)
-      window?.removeEventListener('mouseup', onMouseUp)
-      window?.removeEventListener('mousemove', onMouseMove)
+      knobEl?.removeEventListener('pointerdown', onMouseDown)
+      window?.removeEventListener('pointerup', onMouseUp)
+      window?.removeEventListener('pointermove', onMouseMove)
     }
   }, [duration])
 
