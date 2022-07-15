@@ -38,6 +38,12 @@ export function DiagnosticsCodes() {
   const { addToast } = useToaster()
   const [table, setTable] = useState<any[]>([])
 
+  const load = () =>
+    wrap(async () => {
+      const result = await api.codes.read()
+      setTable(result)
+    })
+
   const onClearCodesClick = () =>
     wrap(async () => {
       const result = await api.codes.clear()
@@ -48,16 +54,16 @@ export function DiagnosticsCodes() {
       })
     })
 
+  const onRefresh = () => load()
+
   useEffect(() => {
-    wrap(async () => {
-      const result = await api.codes.read()
-      setTable(result)
-    })
+    load()
   }, [])
 
   return (
     <div className="flex h-full shrink grow flex-col space-y-4 overflow-hidden">
       <div className="flex justify-end space-x-2">
+        <Button onClick={onRefresh}>Refresh</Button>
         <Button onClick={onClearCodesClick}>Clear Codes</Button>
         <Button to="/diagnostics">Back</Button>
       </div>
