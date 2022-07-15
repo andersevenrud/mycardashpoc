@@ -1,9 +1,10 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlay } from '@fortawesome/free-solid-svg-icons'
 import { classNames } from '~/utils'
 import AlbumArt from './AlbumArt'
 import TimeStamp from '~/components/TimeStamp'
+import type { MouseEvent } from 'react'
 import type { Song } from '~/services/mpd'
 
 function TrackListItem({
@@ -105,6 +106,7 @@ export default function SongList({
   currentId?: number
   onClick: (song: Song) => void
 }) {
+  const [ref, setRef] = useState<HTMLElement | null>(null)
   const current = useRef<HTMLDivElement>(null)
 
   const lists: Record<string, any> = {
@@ -116,6 +118,26 @@ export default function SongList({
   const ListItem = lists[type] || lists.song
 
   const label = loading ? 'Loading...' : 'No results'
+
+  const onClickWrapper = (track: Song) => (ev: MouseEvent<HTMLElement>) => {
+    if (!ref || ref.contains(ev.target as Node)) {
+      onClick(track)
+    }
+  }
+
+  // FIXME: There must be a better way in react to prevent the touches
+  // from hanging around and then trigger a click.
+  useEffect(() => {
+    const onPointerDown = (ev: Event) => {
+      setRef(ev.target as HTMLElement)
+    }
+
+    document.addEventListener('pointerdown', onPointerDown)
+
+    return () => {
+      document.removeEventListener('pointerdown', onPointerDown)
+    }
+  }, [])
 
   useEffect(() => {
     if (current.current) {
@@ -134,7 +156,7 @@ export default function SongList({
               className="cursor-pointer hover:bg-black"
               key={`${track.id}-${track.file}`}
               ref={currentId && track.id === currentId ? current : null}
-              onClick={() => onClick(track)}
+              onClick={onClickWrapper(track)}
             >
               <div className="flex items-center space-x-4 p-2">
                 <ListItem track={track} currentId={currentId} />
