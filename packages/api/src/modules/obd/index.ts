@@ -49,7 +49,7 @@ export default {
       '/codes/read',
       wrapped(async ({ res }) => {
         const response = await fetch(`${config.obd.endpoint}/read`)
-        res.json(response.json())
+        res.json(await response.json())
       })
     )
 
@@ -59,7 +59,7 @@ export default {
         const response = await fetch(`${config.obd.endpoint}/clear`, {
           method: 'POST',
         })
-        res.json(response.json())
+        res.json(await response.json())
       })
     )
 
