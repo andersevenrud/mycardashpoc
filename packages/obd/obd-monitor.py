@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # Based on: https://github.com/zaneclaes/node-pi-obd-monitor
 import obd
-import logging
 import time
 import threading
 from datetime import datetime
 from bottle import route, run
 from prometheus_client import start_http_server, Gauge
 
+baudrate = 9600
 api_http_port = 8080
 http_port = 8000
 poll_interval = 1.0
@@ -29,8 +29,6 @@ class CommandMetric():
         self.unit = None
         self.name = command.name.lower()
         self.metric_prefix = metric_prefix
-        self.log = logging.getLogger('obd.monitor.' + self.name)
-        self.log.info('metric initialized')
 
     def update(self):
         self.response = connection.query(self.command)
@@ -59,10 +57,11 @@ def connect():
         global connection, metrics
         if connection and connection.status() == obd.utils.OBDStatus.CAR_CONNECTED:
             return True
-        log.info('connecting to car...')
-        connection = obd.OBD(baudrate=9600)
+
+        connection = obd.OBD(baudrate=baudrate)
         if connection.status() != obd.utils.OBDStatus.CAR_CONNECTED:
             return False
+
         metrics = {}
         for command in connection.supported_commands:
             metric = CommandMetric(command)
@@ -95,22 +94,24 @@ def clear():
 
 if __name__ == '__main__':
     obd.logger.setLevel(obd.logging.INFO)
-    log = logging.getLogger('obd.monitor')
     timer = Gauge('exporter_collection_time',
                   'How much time it takes to collect metrics')
 
-    log.warning('starting prometheus on port %s' % http_port)
     start_http_server(http_port)  # prometheus
 
     p.start()
 
     # Continuously poll the metrics.
     while True:
-        first_connection = False if connection else True
+        obd.logger.setLevel(obd.logging.INFO)
         if connect():
+            obd.logger.setLevel(obd.logging.WARNING)
+
             start = datetime.now()
+
             for metric_name in metrics:
                 metrics[metric_name].update()
+
             end = datetime.now()
             diff = end - start
             timer.set(diff.total_seconds() * 1000)
