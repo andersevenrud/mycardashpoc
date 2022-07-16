@@ -2,6 +2,10 @@ import axios from 'axios'
 
 export type OBDErrorCode = [string, string]
 
+export interface OBDResponse<T> {
+  result: T
+}
+
 export interface OBDMetric {
   metric: {
     name: string
@@ -40,7 +44,12 @@ export default {
   metrics: (body: OBDMetricBody) => post<OBDMetric[]>('/metrics', body),
 
   codes: {
-    read: () => post<OBDErrorCode[]>('/codes/read'),
-    clear: () => post<boolean>('/codes/clear'),
+    read: () =>
+      post<OBDResponse<OBDErrorCode[]>>('/codes/read').then(
+        ({ result }) => result
+      ),
+
+    clear: () =>
+      post<OBDResponse<boolean>>('/codes/clear').then(({ result }) => result),
   },
 }
