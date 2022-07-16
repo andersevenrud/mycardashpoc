@@ -95,6 +95,9 @@ export function DiagnosticsMetrics() {
   const { addToast } = useToaster()
   const [table, setTable] = useState<OBDMetric[]>([])
 
+  const parse = (value: number) =>
+    Number.isInteger(value) ? value : value.toFixed(2)
+
   const load = () =>
     wrap(async () => {
       const now = new Date()
@@ -162,7 +165,7 @@ export function DiagnosticsMetrics() {
           <div key={name} className="space-y-2 p-2">
             <div className="flex justify-between">
               <div>{name.replace('obd_', '').replace(/_/g, ' ')}</div>
-              <div>{values[values.length - 1].value}</div>
+              <div>{parse(values[values.length - 1].value)}</div>
             </div>
             <div className="h-8">
               <Sparklines
