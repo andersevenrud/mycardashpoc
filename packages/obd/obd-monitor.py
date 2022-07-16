@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 # Based on: https://github.com/zaneclaes/node-pi-obd-monitor
+import sys
 import obd
 import time
 import threading
 from datetime import datetime
-from bottle import route, run
+from bottle import route, run, abort
 from prometheus_client import start_http_server, Gauge
 
 baudrate = 9600
@@ -72,11 +73,13 @@ def connect():
 def read():
     with lock:
         if connection.status() != obd.utils.OBDStatus.CAR_CONNECTED:
-            return {'error': 'no connection'}
+            abort(500, 'No connection')
+            return
 
         response = connection.query(obd.commands.GET_DTC)
         if response.is_null():
-            return {'error': 'no response'}
+            abort(500, 'No response')
+            return
 
         return {'result': response.value}
 
@@ -85,7 +88,8 @@ def read():
 def clear():
     with lock:
         if connection.status() != obd.utils.OBDStatus.CAR_CONNECTED:
-            return {'error': 'no connection'}
+            abort(500, 'No connection')
+            return
 
         connection.query(obd.commands.CLEAR_DTC)
 
@@ -103,17 +107,21 @@ if __name__ == '__main__':
 
     # Continuously poll the metrics.
     while True:
-        obd.logger.setLevel(obd.logging.INFO)
-        if connect():
-            obd.logger.setLevel(obd.logging.WARNING)
+        try:
+            obd.logger.setLevel(obd.logging.INFO)
+            if connect():
+                obd.logger.setLevel(obd.logging.WARNING)
 
-            start = datetime.now()
+                start = datetime.now()
 
-            for metric_name in metrics:
-                metrics[metric_name].update()
+                for metric_name in metrics:
+                    metrics[metric_name].update()
 
-            end = datetime.now()
-            diff = end - start
-            timer.set(diff.total_seconds() * 1000)
+                end = datetime.now()
+                diff = end - start
+                timer.set(diff.total_seconds() * 1000)
+        except Exception as e:
+            print(e)
+            sys.exit(1)
 
         time.sleep(poll_interval)
