@@ -89,7 +89,7 @@ def clear():
 
         connection.query(obd.commands.CLEAR_DTC)
 
-        return {'result': 'True'}
+        return {'result': True}
 
 
 if __name__ == '__main__':
