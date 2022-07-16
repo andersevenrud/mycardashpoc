@@ -4,6 +4,7 @@ import obd
 import logging
 import time
 import threading
+from datetime import datetime
 from bottle import route, run
 from prometheus_client import start_http_server, Gauge
 
@@ -95,6 +96,8 @@ def clear():
 if __name__ == '__main__':
     obd.logger.setLevel(obd.logging.INFO)
     log = logging.getLogger('obd.monitor')
+    timer = Gauge('exporter_collection_time',
+                  'How much time it takes to collect metrics')
 
     log.warning('starting prometheus on port %s' % http_port)
     start_http_server(http_port)  # prometheus
@@ -105,7 +108,11 @@ if __name__ == '__main__':
     while True:
         first_connection = False if connection else True
         if connect():
+            start = datetime.now()
             for metric_name in metrics:
                 metrics[metric_name].update()
+            end = datetime.now()
+            diff = end - start
+            timer.set(diff.total_seconds() * 1000)
 
         time.sleep(poll_interval)
