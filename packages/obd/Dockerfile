@@ -4,16 +4,13 @@ FROM alpine:3.16.0
 RUN apk add --no-cache \
   python3 \
   py3-pip \
-  py3-pyserial \
   git
 
 RUN rm -rf /var/cache/apk/*
 
 RUN pip3 install --upgrade \
   setuptools \
-  wheel \
   prometheus_client \
-  pyserial \
   bottle
 
 RUN git clone https://github.com/brendan-w/python-OBD.git && \
