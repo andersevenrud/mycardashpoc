@@ -78,7 +78,7 @@ python3 -m elm -s car
 Make a note of the port given, then put it in your dotenv file:
 
 ```bash
-echo "OBD_PORT=/dev/pts/15 >> .env"
+echo "OBD_PORT=/dev/pts/15" >> .env
 ```
 
 ## License
