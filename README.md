@@ -25,9 +25,9 @@ Integrates with OBD and MPD and serves a simple dashboard with pluggable modules
 
 ## Requirements
 
-Raspberry Pi 3 or newer. Some libraries currently does not compile correctly on 32-bit ARM.
+Designed to run on a Raspberry Pi 3 with a 7" touch screen.
 
-Designed to run in some sort of kiosk mode.
+But can technically run on anything.
 
 ## Development
 
