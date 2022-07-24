@@ -17,7 +17,7 @@ services:
     ports:
       - 9090:9090
     volumes:
-      - ./packages/prometheus/etc:/etc/prometheus/:ro
+      - ./packages/prometheus/prometheus.yaml:/etc/prometheus/prometheus.yaml:ro
       - prometheus_data:/prometheus
   mpd:
     restart: on-failure

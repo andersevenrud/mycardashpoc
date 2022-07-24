@@ -13,7 +13,7 @@ services:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
     volumes:
-      - ./packages/prometheus/etc:/etc/prometheus/:ro
+      - ./packages/prometheus/prometheus.yaml:/etc/prometheus/prometheus.yaml:ro
       - prometheus_data:/prometheus
   mpd:
     image: ghcr.io/andersevenrud/mycardashpoc-mpd:latest
