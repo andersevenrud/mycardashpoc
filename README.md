@@ -21,7 +21,13 @@ Integrates with OBD and MPD and serves a simple dashboard with pluggable modules
   * DTC Reading and Clearing
   * Metrics inspection
 
-![screenshot](https://user-images.githubusercontent.com/161548/173695326-5e952c53-6d44-4795-9618-be2de56aadc1.png)
+![mycardashpoc-dashboard](https://user-images.githubusercontent.com/161548/180668353-6dcb3c42-1411-4bea-8a02-d3c65482b6d0.png)
+
+![mycardashpoc-dashboard](https://user-images.githubusercontent.com/161548/180668357-e9fbe9e9-120f-48b0-8a27-1143ba82df65.png)
+
+![mycardashpoc-music](https://user-images.githubusercontent.com/161548/180668364-eb6e79fd-a988-445e-be96-724cb10ea84f.png)
+
+![mycardashpoc-metrics](https://user-images.githubusercontent.com/161548/180668369-8feac193-b635-4ab4-b708-a914f21d0925.png)
 
 ## Requirements
 
