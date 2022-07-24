@@ -37,19 +37,12 @@ sudo apt autoremove
 
 ## Set up project
 
-> Pre-built docker images coming soon (tm).
-
-You want to have a fast SD card or an overlay filesystem to a SSD for this.
-
 ```bash
 # Clone source
 git clone https://github.com/andersevenrud/mycardashpoc.git
 
 # Enter source directory
 cd mycardashpoc
-
-# Ensure that everything builds
-docker compose -f docker-compose.production.yml build
 
 # Now start the project
 docker compose -f docker-compose.production.yml up -d
