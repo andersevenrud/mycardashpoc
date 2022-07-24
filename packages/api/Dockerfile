@@ -3,9 +3,6 @@ FROM node:16-alpine
 WORKDIR /usr/src/api
 COPY . .
 
-RUN apk add --no-cache python3 make g++ linux-headers
-RUN rm -rf /var/cache/apk/*
-
 RUN npm config set update-notifier false
 RUN npm ci --silent --no-audit --no-fund
 RUN npm run build

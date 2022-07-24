@@ -44,9 +44,7 @@ services:
   api:
     restart: on-failure
     user: node
-    build:
-      context: packages/api
-      dockerfile: Dockerfile.dev
+    image: node:16-alpine
     command: ./entrypoint.sh
     working_dir: /usr/src/api
     volumes:

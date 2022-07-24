@@ -1,5 +1,0 @@
-FROM node:16-alpine
-
-# Dependencies required for building obd2-over-serial with node-gyp
-RUN apk add --no-cache python3 make g++ linux-headers
-RUN rm -rf /var/cache/apk/*
