@@ -27,7 +27,7 @@ Integrates with OBD and MPD and serves a simple dashboard with pluggable modules
 
 Designed to run on a Raspberry Pi 3 with a 7" touch screen.
 
-But can technically run on anything.
+But can technically run on anything with Docker.
 
 ## Development
 
