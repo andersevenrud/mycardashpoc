@@ -1,8 +1,14 @@
 name: Docker Image Publish
+
 on:
   push:
     branches:
       - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   publish_api:
     runs-on: ubuntu-latest
