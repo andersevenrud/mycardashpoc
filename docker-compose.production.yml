@@ -2,9 +2,8 @@ version: "2"
 
 services:
   obd_exporter:
+    image: ghcr.io/andersevenrud/mycardashpoc-obd:latest
     restart: on-failure
-    build:
-      context: packages/obd
     volumes:
       - ${OBD_PORT:-/dev/rfcomm0}:/dev/rfcomm0
   prometheus:
@@ -17,27 +16,25 @@ services:
       - ./packages/prometheus/etc:/etc/prometheus/:ro
       - prometheus_data:/prometheus
   mpd:
+    image: ghcr.io/andersevenrud/mycardashpoc-mpd:latest
     restart: on-failure
     user: mpd
     cap_add:
       - SYS_NICE
-    build:
-      context: packages/mpd
     ports:
       - 8000:8000
     volumes:
       - ./data/mpd/config:/root/.config
       - ./data/mpd/music:/var/lib/mpd/music
       - ./data/mpd/playlists:/var/lib/mpd/playlists
+      - ./packages/mpd/mpd.conf:/etc/mpd.conf:ro
   ui:
+    image: ghcr.io/andersevenrud/mycardashpoc-ui:latest
     restart: on-failure
-    build:
-      context: packages/ui
   api:
+    image: ghcr.io/andersevenrud/mycardashpoc-api:latest
     restart: on-failure
     user: node
-    build:
-      context: packages/api
     volumes:
       - ./data/api/cache:/usr/src/api/cache
     depends_on:
