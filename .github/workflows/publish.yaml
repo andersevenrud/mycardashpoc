@@ -1,9 +1,10 @@
 name: Docker Image Publish
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
 jobs:
-  build:
+  publish_api:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -14,29 +15,58 @@ jobs:
         registry: ghcr.io
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
-    - name: Build and Publish API
-      run: |
+    - run: |
         docker buildx build \
           -t ghcr.io/${{ github.repository_owner }}/mycardashpoc-api:latest \
           -f packages/api/Dockerfile \
           --push \
           --platform=linux/arm64,linux/amd64 packages/api
-    - name: Build and Publish UI
-      run: |
+  publish_ui:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: docker/setup-qemu-action@v1
+    - uses: docker/setup-buildx-action@v1
+    - uses: docker/login-action@v1
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    - run: |
         docker buildx build \
           -t ghcr.io/${{ github.repository_owner }}/mycardashpoc-ui:latest \
           -f packages/ui/Dockerfile \
           --push \
           --platform=linux/arm64,linux/amd64 packages/ui
-    - name: Build and Publish OBD
-      run: |
+  publish_obd:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: docker/setup-qemu-action@v1
+    - uses: docker/setup-buildx-action@v1
+    - uses: docker/login-action@v1
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    - run: |
         docker buildx build \
           -t ghcr.io/${{ github.repository_owner }}/mycardashpoc-obd:latest \
           -f packages/obd/Dockerfile \
           --push \
           --platform=linux/arm64,linux/amd64 packages/obd
-    - name: Build and Publish MPD
-      run: |
+  publish_mpd:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: docker/setup-qemu-action@v1
+    - uses: docker/setup-buildx-action@v1
+    - uses: docker/login-action@v1
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    - run: |
         docker buildx build \
           -t ghcr.io/${{ github.repository_owner }}/mycardashpoc-mpd:latest \
           -f packages/mpd/Dockerfile \
