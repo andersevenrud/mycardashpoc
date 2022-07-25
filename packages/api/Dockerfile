@@ -4,10 +4,10 @@ WORKDIR /usr/src/api
 COPY . .
 
 RUN npm config set update-notifier false
-RUN npm ci --silent --no-audit --no-fund
+RUN npm ci --quiet --no-audit --no-fund
 RUN npm run build
-RUN npm prune --production --silent --no-audit --no-fund
-RUN npm install --silent --no-audit --no-fund -g clean-modules@2.0.4 && \
+RUN npm prune --production --quiet --no-audit --no-fund
+RUN npm install --quiet --no-audit --no-fund -g clean-modules@2.0.4 && \
       clean-modules -y
 
 FROM node:16-alpine

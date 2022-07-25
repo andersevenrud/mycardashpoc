@@ -1,7 +1,7 @@
 FROM node:16-alpine
 WORKDIR /usr/src/ui
 COPY . .
-RUN npm ci --silent --no-audit --no-fund
+RUN npm ci --quiet --no-audit --no-fund
 RUN npm run build
 
 FROM nginx:1-alpine
