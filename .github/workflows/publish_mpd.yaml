@@ -1,4 +1,4 @@
-name: MPD Docker Image Publish
+name: Publish MDP package
 
 on:
   workflow_dispatch:

@@ -1,4 +1,4 @@
-name: UI Docker Image Publish
+name: Publish UI package
 
 on:
   workflow_dispatch:

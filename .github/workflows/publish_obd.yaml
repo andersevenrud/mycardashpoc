@@ -1,4 +1,4 @@
-name: OBD Docker Image Publish
+name: Publish OBD package
 
 on:
   workflow_dispatch:

@@ -1,4 +1,4 @@
-name: API Docker Image Publish
+name: Publish API package
 
 on:
   workflow_dispatch:
