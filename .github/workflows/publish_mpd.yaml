@@ -1,0 +1,31 @@
+name: MPD Docker Image Publish
+
+on:
+  push:
+    paths:
+      - packages/mpd/**
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}-mpd
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: docker/setup-qemu-action@v1
+    - uses: docker/setup-buildx-action@v1
+    - uses: docker/login-action@v1
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    - run: |
+        docker buildx build \
+          -t ghcr.io/${{ github.repository_owner }}/mycardashpoc-mpd:latest \
+          -f packages/mpd/Dockerfile \
+          --push \
+          --platform=linux/arm64,linux/amd64 packages/mpd
