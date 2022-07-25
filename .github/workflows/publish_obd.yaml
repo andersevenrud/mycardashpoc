@@ -1,6 +1,7 @@
 name: OBD Docker Image Publish
 
 on:
+  workflow_dispatch:
   push:
     paths:
       - packages/obd/**

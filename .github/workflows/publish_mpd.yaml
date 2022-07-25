@@ -1,6 +1,7 @@
 name: MPD Docker Image Publish
 
 on:
+  workflow_dispatch:
   push:
     paths:
       - packages/mpd/**
